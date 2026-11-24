@@ -1,0 +1,602 @@
+{
+  "name": "Facebook Autoposting",
+  "nodes": [
+    {
+      "parameters": {
+        "authentication": "communityManagement",
+        "postAs": "organization",
+        "organization": "110250912",
+        "text": "={{ $json.Captions }}",
+        "shareMediaCategory": "IMAGE",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.linkedIn",
+      "typeVersion": 1,
+      "position": [
+        672,
+        -400
+      ],
+      "id": "80342552-d3a7-4c07-93a7-49cdd213d7cb",
+      "name": "Create a post",
+      "credentials": {
+        "linkedInCommunityManagementOAuth2Api": {
+          "id": "1fxq9bv9toMLObKC",
+          "name": "LinkedIn Community Management account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json['File Type'] }}",
+                    "rightValue": "image",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "b8964cfa-72fe-4e9c-92d9-29c296aa9be8"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Image"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "332e2053-d44f-49d7-8670-77507c8c0886",
+                    "leftValue": "={{ $json['File Type'] }}",
+                    "rightValue": "video",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Video"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        0,
+        -224
+      ],
+      "id": "b43b420f-9856-46af-b0ed-a3f9cb5a25e0",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "chatId": "5874486175",
+        "text": "={{ $json.Status }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1136,
+        -96
+      ],
+      "id": "8d6b9e2f-9796-4819-bd19-9be5990f5dc0",
+      "name": "Send a text message",
+      "webhookId": "5b76458c-23c7-4ec1-a4a3-560bb2c6715c",
+      "credentials": {
+        "telegramApi": {
+          "id": "2zHduhSKedPV56PJ",
+          "name": "Mohammad Ehab"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v27.0/1092491187273727/photos",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "access_token",
+              "value": "EAAiQqU77ZAZBkBTBj9MOjyZAJLSqkaEMdanOMh46y8cXIs3r0mG6uxi2XDe6YvF3LiDqTISbQAMZCdBTDl8dhwnwNjEam33sTOqpOLc5A7r85h619wEEZC607ZCYHL84zlXR6RhiFZAld9mw45ZBGm9BQvfrZBq1ZB9JnmZA9Py0GHYnD85pSwPRiTZBACJ71BSHFg33xOcLsVGN"
+            },
+            {
+              "name": "caption",
+              "value": "={{ $json.Captions }}"
+            },
+            {
+              "parameterType": "formBinaryData",
+              "name": "source",
+              "inputDataFieldName": "data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        672,
+        -208
+      ],
+      "id": "615e8c58-d703-4f05-8a9a-a89d1dc1b9b6",
+      "name": "Photo http request"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "e964fdca-a5a0-4e59-a0e6-4bb3287c8ad5",
+              "leftValue": "={{ $json['Image Url'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        224,
+        -320
+      ],
+      "id": "3232b506-850a-499d-96c0-34f802c5472b",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1ZAFvx_JN7xAlMi-Z0AX68wCZEfIdWWbWJkGG5mc5e7A",
+          "mode": "list",
+          "cachedResultName": "services_sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ZAFvx_JN7xAlMi-Z0AX68wCZEfIdWWbWJkGG5mc5e7A/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1734368293,
+          "mode": "list",
+          "cachedResultName": "Sheet2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ZAFvx_JN7xAlMi-Z0AX68wCZEfIdWWbWJkGG5mc5e7A/edit#gid=1734368293"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status": "Done",
+            "Image Url": "={{ $('Get row(s) in sheet').item.json['Image Url'] }}"
+          },
+          "matchingColumns": [
+            "Image Url"
+          ],
+          "schema": [
+            {
+              "id": "Captions",
+              "displayName": "Captions",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Image Url",
+              "displayName": "Image Url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "File Type",
+              "displayName": "File Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        880,
+        -96
+      ],
+      "id": "18e66c6d-addb-446b-b7b9-e448c48816fe",
+      "name": "Update status",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "9hlDaAef0PYIf6sR",
+          "name": "Mohammad Ehab"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "e964fdca-a5a0-4e59-a0e6-4bb3287c8ad5",
+              "leftValue": "={{ $json['Image Url'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        208,
+        0
+      ],
+      "id": "d635086a-287a-4102-8bc3-2c3b7b752074",
+      "name": "If3"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v27.0/1092491187273727/videos",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "access_token",
+              "value": "EAAiQqU77ZAZBkBTBj9MOjyZAJLSqkaEMdanOMh46y8cXIs3r0mG6uxi2XDe6YvF3LiDqTISbQAMZCdBTDl8dhwnwNjEam33sTOqpOLc5A7r85h619wEEZC607ZCYHL84zlXR6RhiFZAld9mw45ZBGm9BQvfrZBq1ZB9JnmZA9Py0GHYnD85pSwPRiTZBACJ71BSHFg33xOcLsVGN"
+            },
+            {
+              "name": "description",
+              "value": "={{ $json.Captions }}"
+            },
+            {
+              "parameterType": "formBinaryData",
+              "name": "source",
+              "inputDataFieldName": "data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        656,
+        -16
+      ],
+      "id": "deeb610a-96fe-4de2-a9ec-e11c55e5e5b7",
+      "name": "Video http request"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json['Image Url'] }}",
+          "mode": "url"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        464,
+        -368
+      ],
+      "id": "b044d0ae-bd00-406c-8935-421715b2c1ec",
+      "name": "Download Photo",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "3w5fCPIzHN8vm6rc",
+          "name": "Mohammad Ehab"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json['Image Url'] }}",
+          "mode": "url"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        432,
+        -16
+      ],
+      "id": "330513cd-ee5a-4786-b9fa-26af8bb9382e",
+      "name": "Download video",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "3w5fCPIzHN8vm6rc",
+          "name": "Mohammad Ehab"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1ZAFvx_JN7xAlMi-Z0AX68wCZEfIdWWbWJkGG5mc5e7A",
+          "mode": "list",
+          "cachedResultName": "services_sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ZAFvx_JN7xAlMi-Z0AX68wCZEfIdWWbWJkGG5mc5e7A/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1734368293,
+          "mode": "list",
+          "cachedResultName": "Sheet2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ZAFvx_JN7xAlMi-Z0AX68wCZEfIdWWbWJkGG5mc5e7A/edit#gid=1734368293"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Status",
+              "lookupValue": "To do"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -208,
+        -224
+      ],
+      "id": "eb9e4837-be99-4515-9a7c-9554b105e1d6",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "9hlDaAef0PYIf6sR",
+          "name": "Mohammad Ehab"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 5
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -384,
+        -256
+      ],
+      "id": "cfcbbc40-c05e-4358-9eb3-d7b6dbee5c9e",
+      "name": "Schedule Trigger"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Photo http request": {
+      "main": [
+        [
+          {
+            "node": "Update status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Download Photo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update status": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If3": {
+      "main": [
+        []
+      ]
+    },
+    "Video http request": {
+      "main": [
+        [
+          {
+            "node": "Update status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Photo": {
+      "main": [
+        [
+          {
+            "node": "Create a post",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Photo http request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download video": {
+      "main": [
+        [
+          {
+            "node": "Video http request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a post": {
+      "main": [
+        []
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "0aa9fb98-de09-4b0f-8546-cc09994f5ee9",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "20cf75cd0417fe5be3c3d8dcf7163bcd4dd5f0947193527bf3d55f850ac76577"
+  },
+  "nodeGroups": [],
+  "id": "T5EfdClJw7P2wtx4",
+  "tags": []
+}
